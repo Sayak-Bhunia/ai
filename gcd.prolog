@@ -7,4 +7,4 @@ clauses
 	gcd(M,N):-N>M,gcd(N,M).
 	gcd(M,N):-S=M mod N,gcd(N,S).
 goal
-  go
+  go(2,3)
