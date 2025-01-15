@@ -1,7 +1,5 @@
-domains
-	X=integer
 predicates
-	gcd(X,X).
+	gcd(integer, integer).
 clauses
 	gcd(M,0):- write(M).
 	gcd(M,N):-N>M,gcd(N,M).
