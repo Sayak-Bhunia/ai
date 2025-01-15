@@ -1,19 +1,11 @@
 predicates
-	go
-	fact(integer,integer)
+	f(integer, integer)
 clauses
-	go:-
-	write("give the no:"),
-	readint(X),
-	Z=1,
-	fact(X,Z).
-	
-	fact(1,Z):-
-	write("the result:",Z).
-	
-	fact(X,Z):-
-	Y=Z*X,
-	XX=X-1,
-	fact(XX,Y).
+	f(1, B):- write("res = ",B).
+	f(A, B):-
+	A>1,
+	C = A*B,
+	AA = A - 1,	
+	f(AA, C).
 goal
-  go
+	f(5, 1)
