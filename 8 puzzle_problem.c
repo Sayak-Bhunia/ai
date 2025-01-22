@@ -1,14 +1,29 @@
-#include <limits.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
+// Online C compiler to run C program online
+#include<stdio.h>
+#include<stdlib.h>
+#include<limits.h>
+#include<stdbool.h>
+#include<string.h>
 #define n 3
 
 struct Node {
     struct Node* parent;
     int mat[n][n], x, y, cost, level;
 };
+
+struct Node* newNode(struct Node* parent, int mat[n][n], int x, int y, int nx, int ny, int level) {
+    struct Node* node = (struct Node*)malloc(sizeof(struct Node));
+    node->parent = parent;
+    memcpy(node->mat, mat, sizeof(node->mat));
+    int tmp = node->mat[x][y];
+    node->mat[x][y] = node->mat[nx][ny];
+    node->mat[nx][ny] = tmp;
+    node->level = level;
+    node->cost = INT_MAX;
+    node->x = nx;
+    node->y = ny;
+    return node;
+}
 
 void printMatrix(int mat[n][n]) {
     for(int i=0;i<n;i++) {
@@ -17,33 +32,21 @@ void printMatrix(int mat[n][n]) {
     }
 }
 
-struct Node* newNode(struct Node* parent, int mat[n][n], int x, int y, int newX, int newY, int level) {
-    struct Node* node = (struct Node*)malloc(sizeof(struct Node));
-    node->parent = parent;
-    memcpy(node->mat, mat, sizeof(node->mat));
-    int temp = node->mat[x][y];
-    node->mat[x][y] = node->mat[newX][newY];
-    node->mat[newX][newY] = temp;
-    node->cost = INT_MAX;
-    node->level = level;
-    node->x = newX;
-    node->y = newY;
-    return node;
-}
-
 int row[] = {1, 0, -1, 0};
 int col[] = {0, -1, 0, 1};
 
 int calc(int a[n][n], int b[n][n]) {
     int c = 0;
-    for(int i=0;i<n;i++)
-        for(int j=0;j<n;j++)
+    for(int i=0;i<n;i++) {
+        for(int j=0;j<n;j++) {
             if(a[i][j] && a[i][j] != b[i][j]) c++;
+        }
+    }
     return c;
 }
 
-int isSafe(int x, int y) {
-    return (x>=0 && x<n && y>=0 && y<n);
+bool isSafe(int x, int y) {
+    return x>=0 && x<n && y>=0 && y<n;
 }
 
 void printPath(struct Node* root) {
@@ -53,20 +56,20 @@ void printPath(struct Node* root) {
     printf("\n");
 }
 
-int comp(const void* lhs, const void* rhs) {
+int cmp(const void *lhs, const void *rhs) {
     struct Node* l = *(struct Node**)lhs;
     struct Node* r = *(struct Node**)rhs;
     return (l->cost + l->level) - (r->cost + r->level);
 }
 
-void solve(int a[n][n], int x, int y, int b[n][n]) {
+void helper(int x, int y, int a[n][n], int b[n][n]) {
     struct Node* pq[100000];
     int sz = 0;
     struct Node* root = newNode(NULL, a, x, y, x, y, 0);
     root->cost = calc(a, b);
     pq[sz++] = root;
     while(sz>0) {
-        qsort(pq, sz, sizeof(struct Node*), comp);
+        qsort(pq, sz, sizeof(struct Node*), cmp);
         struct Node* mn = pq[0];
         for(int i=1;i<sz;i++) pq[i-1] = pq[i];
         sz--;
@@ -91,11 +94,5 @@ int main() {
     int a[n][n] = {{1, 2, 3}, {5, 6, 0}, {7, 8, 4}};
     int b[n][n] = {{1, 2, 3}, {5, 8, 6}, {0, 7, 4}};
     int x = 1, y = 2;
-    solve(a, x, y, b);
+    helper(x, y, a, b);
 }
-
-
-1 2 3  1 2 3
-5 6 0  5 8 6
-7 8 4  0 7 4
-    
