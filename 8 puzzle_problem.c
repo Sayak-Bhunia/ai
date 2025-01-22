@@ -17,7 +17,7 @@ void printMatrix(int mat[n][n]) {
     }
 }
 
-struct Node* newNode(int mat[n][n], int x, int y, int newX, int newY, int level, struct Node* parent) {
+struct Node* newNode(struct Node* parent, int mat[n][n], int x, int y, int newX, int newY, int level) {
     struct Node* node = (struct Node*)malloc(sizeof(struct Node));
     node->parent = parent;
     memcpy(node->mat, mat, sizeof(node->mat));
@@ -62,7 +62,7 @@ int comp(const void* lhs, const void* rhs) {
 void solve(int a[n][n], int x, int y, int b[n][n]) {
     struct Node* pq[100000];
     int sz = 0;
-    struct Node* root = newNode(a, x, y, x, y, 0, NULL);
+    struct Node* root = newNode(NULL, a, x, y, x, y, 0);
     root->cost = calc(a, b);
     pq[sz++] = root;
     while(sz>0) {
@@ -77,9 +77,9 @@ void solve(int a[n][n], int x, int y, int b[n][n]) {
         for(int i=0;i<4;i++) {
             if(isSafe(mn->x + row[i], mn->y + col[i])) {
                 struct Node* child = newNode(
-                    mn->mat, mn->x, mn->y,
+                    mn, mn->mat, mn->x, mn->y,
                     mn->x + row[i], mn->y + col[i],
-                    mn->level + 1, mn);
+                    mn->level + 1);
                 child->cost = calc(child->mat, b);
                 pq[sz++] = child;
             }
